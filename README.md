@@ -1,3 +1,5 @@
+The discourse scraping script is `project-scraper.py`.
+
 ### Getting started
 
 - Update your discourse cookies in `cookies.json`. The example cookies have expired.
