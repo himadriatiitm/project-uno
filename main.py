@@ -2,15 +2,16 @@ import sqlite_utils
 import llm
 import os
 from pathlib import Path
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, List
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import base64
 
 
 class Request(BaseModel):
     question: str
-    image: Optional[str]
+    image: Optional[str] = Field(None, description="Image for additional context.")
 
 
 class Link(BaseModel):
@@ -38,6 +39,17 @@ collection = llm.Collection("project-uno", db, model_id=model)
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get('/')
+async def root():
+    return {'hello': 'world'}
 
 @app.post("/api/")
 async def post_root(request: Request) -> Response:
