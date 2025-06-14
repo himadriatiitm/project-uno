@@ -11,4 +11,6 @@ wheels/
 corpuses
 discourse-corpuses
 discourse-posts
+tools-in-data-science*
 embeddings*
+cookies.json
