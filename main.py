@@ -80,22 +80,33 @@ If the answer is not in the context, answer "<unknown>"
         if "<unknown>" in response:
             continue
 
-        url = between_tags(response, "url")
-        if url.startswith('/t/'):
-            url = 'https://discourse.onlinedegree.iitm.ac.in' + url
-        text = between_tags(response, "text")
-        links.append(Link(text=text, url=url))
+        try:
+            url = between_tags(response, "url")
+            if url.startswith('/t/'):
+                url = 'https://discourse.onlinedegree.iitm.ac.in' + url
+            text = between_tags(response, "text")
+            links.append(Link(text=text, url=url))
+        except ValueError:
+            # the llm responded with a malformed body
+            # there are no tags
+            continue
 
-    response = model.prompt(
-        f"""
-{notes}
+    answer = None
+    while answer is None:
+        response = model.prompt(
+            f"""
+    {notes}
 
-Answer only from the above notes.
-Write your final answer in <answer></answer> tags.
-If the answer is not in the context, respond with <answer>I don't know</answer>.
+    Answer only from the above notes.
+    Write your final answer in <answer></answer> tags.
+    If the answer is not in the context, respond with <answer>I don't know</answer>.
 
-{request.question}
-"""
-    ).text()
-    answer = between_tags(response, "answer")
+    {request.question}
+    """
+        ).text()
+        try:
+            answer = between_tags(response, "answer")
+        except ValueError:
+            continue
+
     return Response(answer=answer, links=links)
