@@ -1,9 +1,12 @@
+import os
 import httpx
 import json
 from datetime import datetime
 from pathlib import Path
 
 KB_URL = "https://discourse.onlinedegree.iitm.ac.in/c/courses/tds-kb/34.json?page={}"
+dest = Path("discourse-posts")
+os.makedirs(dest, exist_ok=True)
 
 headers = {
     "accept": "application/json, text/javascript, */*; q=0.01",
@@ -58,6 +61,6 @@ for link in links:
     url = POST_BASE.format(link)
     resp = httpx.get(url, headers=headers, cookies=cookies)
     out_path = link.replace("/", "-")
-    (Path("discourse-posts") / out_path).write_text(resp.text)
+    (dest / out_path).write_text(resp.text)
 
 print(links)
