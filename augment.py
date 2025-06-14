@@ -7,7 +7,7 @@ import glob
 
 # TOP_N_NON_ANSWER_RESPONSES = 5
 
-corpus_collection = Path("discourse-corpuses")
+corpus_collection = Path("./corpuses")
 os.makedirs(corpus_collection, exist_ok=True)
 
 for path in glob.glob("discourse-posts/*"):
@@ -41,10 +41,24 @@ for path in glob.glob("discourse-posts/*"):
     dialogue = []
     for answer in top_n_responses:
         cooked = textifier.handle(answer["cooked"])
-        dialogue.append("<url>{}</url><text>{}</text>".format(answer["post_url"], cooked.strip()))
+        dialogue.append("<url>https://discourse.onlinedegree.iitm.ac.in{}</url><text>{}</text>".format(answer["post_url"], cooked.strip()))
 
     to_embed = "\n\n".join(dialogue)
     base = filepath.stem
 
     corpus_path = corpus_collection / f"discourse-{base}.md"
     corpus_path.write_text(to_embed)
+
+tds_dir = Path('./tools-in-data-science-public/')
+g = tds_dir.glob('**/*.md')
+
+for gg in g:
+    relpath = Path(os.path.relpath(gg, tds_dir))
+    name = str(relpath).removesuffix(".md")
+    url = f"https://tds.s-anand.net/#/{name}"
+    text = gg.read_text()
+    content = f'<url>{url}</url><text>{text}</text>'
+    dest = corpus_collection / ("sanand0-" + str(relpath).replace('/', '-'))
+    dest.write_text(content)
+    print(url)
+

@@ -82,8 +82,6 @@ If the answer is not in the context, answer "<unknown>"
 
         try:
             url = between_tags(response, "url")
-            if url.startswith('/t/'):
-                url = 'https://discourse.onlinedegree.iitm.ac.in' + url
             text = between_tags(response, "text")
             links.append(Link(text=text, url=url))
         except ValueError:
