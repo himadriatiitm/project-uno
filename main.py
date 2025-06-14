@@ -49,7 +49,7 @@ app.add_middleware(
 
 @app.get('/')
 async def root():
-    return {'hello': 'world'}
+    return {'health': 'ok'}
 
 @app.post("/api/")
 async def post_root(request: Request) -> Response:
@@ -81,6 +81,8 @@ If the answer is not in the context, answer "<unknown>"
             continue
 
         url = between_tags(response, "url")
+        if url.startswith('/t/'):
+            url = 'https://discourse.onlinedegree.iitm.ac.in' + url
         text = between_tags(response, "text")
         links.append(Link(text=text, url=url))
 
